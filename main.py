@@ -55,3 +55,30 @@ max_sum = max_contiguous_subsequence_sum(arr)
 print(f"The maximum sum of a contiguous subsequence is {max_sum}")
 
 
+
+
+def min_penalty(hotels):
+    # Number of hotels
+    n = len(hotels)
+    
+    # Initialize DP array
+    dp = [float('inf')] * (n + 1)
+    
+    # Starting point penalty is 0
+    dp[0] = 0
+    hotels.insert(0, 0)  # Insert the starting point at position 0
+    
+    # Fill the DP table using the recursive formula
+    for i in range(1, n + 1):
+        for j in range(i):
+            dp[i] = min(dp[i], dp[j] + (300 - (hotels[i] - hotels[j]))**2)
+    
+    # The cell that holds the solution
+    return dp[n]
+
+# Example usage:
+hotels = [100, 200, 400, 600, 700, 900]  # Example hotel mileposts
+min_total_penalty = min_penalty(hotels)
+print(f"The minimum total penalty for the trip is {min_total_penalty}")
+
+
