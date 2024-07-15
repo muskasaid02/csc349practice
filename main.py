@@ -82,3 +82,38 @@ min_total_penalty = min_penalty(hotels)
 print(f"The minimum total penalty for the trip is {min_total_penalty}")
 
 
+
+def max_total_profit(locations, profits, k):
+    n = len(locations)
+    dp = [0] * (n + 1)
+    
+    # Preprocess: remove locations where distance < k
+    filtered_locations = [(locations[i], profits[i]) for i in range(n) if locations[i] >= k]
+    if not filtered_locations:
+        return 0
+    
+    locations, profits = zip(*filtered_locations)
+    n = len(locations)
+    
+    # Initialize DP array
+    dp = [0] * (n + 1)
+    
+    # Fill the DP table using the recursive formula
+    for i in range(1, n + 1):
+        max_profit = 0
+        for j in range(i):
+            if locations[i - 1] - locations[j - 1] > k:
+                max_profit = max(max_profit, dp[j])
+        dp[i] = profits[i - 1] + max_profit
+    
+    # The cell that holds the solution
+    return max(dp)
+
+# Example usage:
+locations = [2, 5, 9, 14, 19]
+profits = [4, 2, 7, 3, 8]
+k = 5
+max_profit = max_total_profit(locations, profits, k)
+print(f"The maximum expected total profit is {max_profit}")
+
+
