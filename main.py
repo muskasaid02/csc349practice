@@ -30,3 +30,28 @@ def find_max_weight_activities(activities):
 activities = [(1, 3, 5), (2, 5, 6), (4, 6, 5), (6, 7, 4), (5, 8, 11), (7, 9, 2)]
 max_weight = find_max_weight_activities(activities)
 print(f"The maximum weight of a set of non-conflicting activities is {max_weight}")
+
+
+
+def max_contiguous_subsequence_sum(arr):
+    if not arr:
+        return 0
+
+    n = len(arr)
+    dp = [0] * n
+
+    # Base case
+    dp[0] = arr[0]
+    
+    for i in range(1, n):
+        dp[i] = max(arr[i], arr[i] + dp[i-1])
+
+    # The cell that holds the solution
+    return max(dp)
+
+# Example usage:
+arr = [5, 15, -30, 10, -5, 40, 10]
+max_sum = max_contiguous_subsequence_sum(arr)
+print(f"The maximum sum of a contiguous subsequence is {max_sum}")
+
+
