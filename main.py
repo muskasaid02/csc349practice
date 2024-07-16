@@ -117,3 +117,194 @@ max_profit = max_total_profit(locations, profits, k)
 print(f"The maximum expected total profit is {max_profit}")
 
 
+
+
+def longest_common_substring(x, y):
+    n = len(x)
+    m = len(y)
+    dp = [[0] * (m + 1) for _ in range(n + 1)]
+    max_length = 0
+
+    for i in range(1, n + 1):
+        for j in range(1, m + 1):
+            if x[i - 1] == y[j - 1]:
+                dp[i][j] = dp[i - 1][j - 1] + 1
+                max_length = max(max_length, dp[i][j])
+            else:
+                dp[i][j] = 0
+
+    return max_length
+
+# Example usage:
+x = "dcabac"
+y = "cbcbabca"
+max_length = longest_common_substring(x, y)
+print(f"The length of the longest common substring is {max_length}")
+
+
+
+def gene_alignment(x, y, delta):
+    n = len(x)
+    m = len(y)
+    dp = [[0] * (m + 1) for _ in range(n + 1)]
+
+    # Initialize base cases
+    for i in range(1, n + 1):
+        dp[i][0] = dp[i-1][0] + delta[x[i-1]]['-']
+    for j in range(1, m + 1):
+        dp[0][j] = dp[0][j-1] + delta['-'][y[j-1]]
+
+    # Fill the DP table using the recursive formula
+    for i in range(1, n + 1):
+        for j in range(1, m + 1):
+            dp[i][j] = max(
+                dp[i-1][j-1] + delta[x[i-1]][y[j-1]],
+                dp[i-1][j] + delta[x[i-1]]['-'],
+                dp[i][j-1] + delta['-'][y[j-1]]
+            )
+
+    return dp[n][m]
+
+# Example usage:
+x = "ATGCC"
+y = "TACGCA"
+delta = {
+    'A': {'A': 1, 'C': -1, 'G': -1, 'T': -1, '-': -2},
+    'C': {'A': -1, 'C': 1, 'G': -1, 'T': -1, '-': -2},
+    'G': {'A': -1, 'C': -1, 'G': 1, 'T': -1, '-': -2},
+    'T': {'A': -1, 'C': -1, 'G': -1, 'T': 1, '-': -2},
+    '-': {'A': -2, 'C': -2, 'G': -2, 'T': -2, '-': 0}
+}
+max_score = gene_alignment(x, y, delta)
+print(f"The highest scoring alignment has a score of {max_score}")
+
+
+
+
+
+
+
+
+
+def max_profit_cloth_cutting(X, Y, products):
+    # Initialize the DP table
+    dp = [[0] * (Y + 1) for _ in range(X + 1)]
+    
+    # Fill the DP table using the recursive formula
+    for w in range(1, X + 1):
+        for h in range(1, Y + 1):
+            for product in products:
+                a, b, c = product
+                if a <= w and b <= h:
+                    dp[w][h] = max(dp[w][h], c + dp[w - a][h - b])
+            for k in range(1, w):
+                dp[w][h] = max(dp[w][h], dp[k][h] + dp[w - k][h])
+            for k in range(1, h):
+                dp[w][h] = max(dp[w][h], dp[w][k] + dp[w][h - k])
+    
+    return dp[X][Y]
+
+# Example usage:
+# X, Y are the dimensions of the cloth
+# products is a list of tuples (a_i, b_i, c_i) where a_i and b_i are the 
+# dimensions needed for product i and c_i is the selling price
+X = 4
+Y = 5
+products = [(1, 2, 3), (2, 2, 4), (3, 1, 5)]
+max_profit = max_profit_cloth_cutting(X, Y, products)
+print(f"The maximum profit obtainable is {max_profit}")
+
+
+def max_profit_cloth_cutting(X, Y, products):
+    # Initialize the DP table
+    dp = [[[0] * (len(products) + 1) for _ in range(Y + 1)] for _ in range(X + 1)]
+    
+    # Fill the DP table using the recursive formula
+    for i in range(1, len(products) + 1):
+        a_i, b_i, c_i = products[i-1]
+        for x in range(1, X + 1):
+            for y in range(1, Y + 1):
+                # Don't include the current product
+                dp[x][y][i] = dp[x][y][i-1]
+                
+                # Include the current product if it fits horizontally
+                if a_i <= x and b_i <= y:
+                    dp[x][y][i] = max(dp[x][y][i], c_i + dp[x - a_i][y][i] + dp[a_i][y - b_i][i])
+                    
+                # Include the current product if it fits vertically
+                if b_i <= x and a_i <= y:
+                    dp[x][y][i] = max(dp[x][y][i], c_i + dp[x][y - b_i][i] + dp[x - b_i][a_i][i])
+                    
+                # Horizontal cuts
+                for k in range(1, x):
+                    dp[x][y][i] = max(dp[x][y][i], dp[k][y][i] + dp[x - k][y][i])
+                
+                # Vertical cuts
+                for k in range(1, y):
+                    dp[x][y][i] = max(dp[x][y][i], dp[x][k][i] + dp[x][y - k][i])
+    
+    return dp[X][Y][len(products)]
+
+# Example usage:
+# X, Y are the dimensions of the cloth
+# products is a list of tuples (a_i, b_i, c_i) where a_i and b_i are the dimensions needed for product i and c_i is the selling price
+X = 4
+Y = 5
+products = [(1, 2, 3), (2, 2, 4), (3, 1, 5)]
+max_profit = max_profit_cloth_cutting(X, Y, products)
+print(f"The maximum profit obtainable is {max_profit}")
+
+
+
+def can_make_change(coins, V):
+    # Initialize the DP table
+    dp = [0] * (V + 1)
+    
+    # Base case
+    dp[0] = 1
+    
+    # Fill the DP table using the recursive formula
+    for i in range(1, V + 1):
+        for coin in coins:
+            if i >= coin:
+                dp[i] = max(dp[i], dp[i - coin])
+    
+    return dp[V] == 1
+
+# Example usage:
+# coins is a list of coin denominations
+# V is the value to make change for
+coins = [1, 3, 4]
+V = 6
+is_possible = can_make_change(coins, V)
+print(f"Is it possible to make change for {V} using the coins {coins}? {'Yes' if is_possible else 'No'}")
+
+
+def can_make_change_once(coins, V):
+    n = len(coins)
+    dp = [[0] * (V + 1) for _ in range(n + 1)]
+
+    # Base case: we can always make change for 0 value with 0 coins
+    for i in range(n + 1):
+        dp[i][0] = 1
+
+    # Fill the DP table using the recursive formula
+    for i in range(1, n + 1):
+        for v in range(1, V + 1):
+            dp[i][v] = dp[i-1][v]  # not using the i-th coin
+            if v >= coins[i-1]:
+                dp[i][v] = max(dp[i][v], dp[i-1][v - coins[i-1]])  # using the i-th coin if possible
+
+    return dp[n][V] == 1
+
+# Example usage:
+# coins is a list of coin denominations
+# V is the value to make change for
+coins = [1, 5, 10, 20]
+V = 31
+is_possible = can_make_change_once(coins, V)
+print(f"Is it possible to make change for {V} using the coins {coins} at most once? {'Yes' if is_possible else 'No'}")
+
+
+
+
